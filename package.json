@@ -4,8 +4,8 @@
   "description": "",
   "main": "test.js",
   "scripts": {
-    "test": "jest",
-    "test:staged": "jest"
+    "test": "jest explorer.compactFolders",
+    "test:staged": "jest --passWithNoTests"
   },
   "author": "",
   "license": "ISC",
