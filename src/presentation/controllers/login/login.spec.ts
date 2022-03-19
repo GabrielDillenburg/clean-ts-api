@@ -1,6 +1,6 @@
 import { MissingParamError } from '../../errors'
 import { badRequest, ok, serverError, unauthorized } from '../../helpers/http/http-helper'
-import { Authentication, Validation } from './login-protocols'
+import { Authentication, AuthenticationModel, Validation } from './login-protocols'
 import { HttpRequest } from '../../protocols/http'
 import { LoginController } from './login'
 
@@ -38,7 +38,7 @@ const makeFakeRequest = (): HttpRequest => ({
 
 const makeAuthentication = (): Authentication => {
   class AuthenticationStub implements Authentication {
-    async auth (email: string, password: string): Promise<string> {
+    async auth (authentication: AuthenticationModel): Promise<string> {
       return 'any_token'
     }
   }
@@ -53,7 +53,10 @@ describe('Login Controller', () => {
     const httpRequest = makeFakeRequest()
 
     await sut.handle(httpRequest)
-    expect(authSpy).toHaveBeenCalledWith('any_email@test.com', 'any_password')
+    expect(authSpy).toHaveBeenCalledWith({
+      email: 'any_email@test.com',
+      password: 'any_password'
+    })
   })
 
   test('should return 401 if invalid credentials are provided', async () => {
