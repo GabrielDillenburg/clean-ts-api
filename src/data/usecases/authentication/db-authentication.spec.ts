@@ -1,5 +1,6 @@
 import { AccountModel } from '../../../domain/model/account'
 import { AuthenticationModel } from '../../../domain/usecases/authentication'
+import { HashComparer } from '../../protocols/criptography/hash-comparer'
 import { LoadAccountByEmailRepository } from '../../protocols/db/load-account-by-email-repository'
 import { DbAuthentication } from './db-authentication'
 
@@ -7,7 +8,7 @@ const makeFakeAccount = (): AccountModel => ({
   id: 'any_id',
   name: 'any_name',
   email: 'any_email@test.com',
-  password: 'any_password'
+  password: 'hashed_password'
 })
 
 const makeFakeLoadAccountByEmailRepository = (): LoadAccountByEmailRepository => {
@@ -28,15 +29,27 @@ const makeFakeAuthentication = (): AuthenticationModel => ({
 interface SutTypes {
   sut: DbAuthentication
   loadAccountByEmailRepositoryStub: LoadAccountByEmailRepository
+  hashComparerStub: HashComparer
 
+}
+
+const makeHashComparer = (): HashComparer => {
+  class HashComparerStub implements HashComparer {
+    async compare (value: string, hash: string): Promise<boolean> {
+      return new Promise(resolve => resolve(true))
+    }
+  }
+  return new HashComparerStub()
 }
 
 const makeSut = (): SutTypes => {
   const loadAccountByEmailRepositoryStub = makeFakeLoadAccountByEmailRepository()
-  const sut = new DbAuthentication(loadAccountByEmailRepositoryStub)
+  const hashComparerStub = makeHashComparer()
+  const sut = new DbAuthentication(loadAccountByEmailRepositoryStub, hashComparerStub)
   return {
     sut,
-    loadAccountByEmailRepositoryStub
+    loadAccountByEmailRepositoryStub,
+    hashComparerStub
   }
 }
 
@@ -65,5 +78,12 @@ describe('Db Authentication', () => {
       .mockReturnValueOnce(null)
     const accessToken = await sut.auth(makeFakeAuthentication())
     expect(accessToken).toBeNull()
+  })
+
+  test('should call HashCompare with correct values', async () => {
+    const { sut, hashComparerStub } = makeSut()
+    const compareSpy = jest.spyOn(hashComparerStub, 'compare')
+    await sut.auth(makeFakeAuthentication())
+    expect(compareSpy).toHaveBeenCalledWith('any_password', 'hashed_password')
   })
 })
