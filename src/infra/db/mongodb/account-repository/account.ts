@@ -23,5 +23,4 @@ export class AccountMongoRepository implements AddAccountRepository, LoadAccount
     const accountCollection = await MongoHelper.getCollection('accounts')
     await accountCollection.updateOne({ _id: id }, { $set: { accessToken: token } })
   }
-
 }
