@@ -7,7 +7,6 @@ import { LogControllerDecorator } from '../../decorators/log-controller-decorato
 import { BcryptAdapter } from '../../../infra/criptography/bcrypt-adapter/bcrypt-adapter'
 import { JwtAdapter } from '../../../infra/criptography/jwt-adapter/jwt-adapter'
 import env from '../../config/env'
-
 import { AccountMongoRepository } from '../../../infra/db/mongodb/account/account-mongo-repository'
 
 export const makeLoginController = (): Controller => {
