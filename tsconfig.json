@@ -6,7 +6,13 @@
         "esModuleInterop": true,
         "allowJs": true,
         "strictNullChecks": false,
-        "noImplicitReturns": false
-
-    }
+        "noImplicitReturns": false,
+    },
+    "include": [
+        "src"
+    ],
+    "exclude": [
+        "**/*.spec.ts",
+        "**/*.test.ts"
+    ]
 }
