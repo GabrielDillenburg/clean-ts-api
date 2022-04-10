@@ -7,7 +7,6 @@
         "allowJs": true,
         "strictNullChecks": false,
         "noImplicitReturns": false,
-        "sourceMap": true
     },
     "include": [
         "src"
